@@ -1,0 +1,22 @@
+{
+    "face_detection": {
+        "accuracy": 1.1,
+        "min_overlap_num": 6,
+        "min_face_width": 30,
+        "min_face_height": 30,
+        "margin": 0.4
+    },
+    "output_dimensions": {
+        "width": 320,
+        "height": 560
+    },
+	
+	"output_image_details": {
+        "file_type": "jpg",
+        "image_quality": 100
+    },
+    "paths": {
+        "input_folder": "C:\\Users\\PC\\Desktop\\input",
+        "output_folder": "C:\\Users\\PC\\Desktop\\output"
+    }
+}
