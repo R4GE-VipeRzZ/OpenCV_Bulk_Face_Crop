@@ -1,0 +1,36 @@
+The program was created in Python 3.13.1 and uses the following Python libraries, cv2, os, numpy, sys and json. The program is able to handle images of the following file types, jpg, png, bmp and webp.
+
+For the exe program to function the config.json file needs to be located in the same directory as the opencv_bulk_face_crop.exe. If it isn't then the program will not be able to function as it won't have input and output directories set for the images.
+
+To change the face detection accuracy, output size, directories and other parameters. Change the values in the config.json file.
+
+config.json File Details:
+
+face_detection
+accuracy: This value sets how much the image is scaled up for each pass when searching for a face. The lower the value the more accurate at face detection it should be, but the more resource intensive the process will be. The value can not be 1 or lower.
+
+min_overlap_num: This value sets  the number of neighbour rectangles that a candidate rectangle should have to retain it. Higher values increase precision but reduce the number of detected faces. The value can not be negative.
+
+min_face_width: This value sets the minimum number of pixels width a detected face needs to be in order to be classed as a detection of a face. The lower the value the more likely a face will be detected, but also the higher the likely hood of false positive face detection. The minimum value is 1.
+
+min_face_height: This value sets the minimum number of pixels height a detected face needs to be in order to be classed as a detection of a face. The lower the value the more likely a face will be detected, but also the higher the likely hood of false positive face detection. The minimum value is 1.
+
+margin: This value sets the percentage value of the face size that is add around the face as a margin. The larger the value the larger the added space around the face in the output image. The value can not be less than 0.
+
+
+
+output_dimensions
+width: This value sets the width in pixels of the output image(s). The value needs to be at least 1.
+height: This value sets the height in pixels of the output image(s). The value needs to be at least 1.
+
+
+
+output_image_details
+file_type: This value sets the file type of the output image(s). The value can be set to jpg, png, bmp or webp.
+image_quality: This values sets the amount of compression that is applied to the output image(s). The value can be set between 0 to 100. With 100 been the highest quality and 0 been the lowest quality. This value is ignored if your output file type is bmp, as bitmaps are loss less and don't support compression.
+
+
+
+paths
+input_folder: This value sets the directory that contains the images that you want to be processed. This value should be the full directory of the location that contains the input images,
+outputfolder: This value sets the directory that the output files are saved to. This value should be set to the full directory location of where you want the output images to be saved to. IMPORTAN this value should not be the same as the input folder.
