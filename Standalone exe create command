@@ -1,0 +1,4 @@
+exe file created with pyinstaller
+
+example of the command if you wish to build your own
+pyinstaller --onefile --add-data "C://Users/PC/AppData/Local/Programs/Python/Python313/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml;cv2/data" opencv_bulk_face_crop.py
