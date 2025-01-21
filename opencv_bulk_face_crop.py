@@ -1,5 +1,6 @@
 # Author: Ben Thompson
 # Python 3.13.1
+# Version 1.0
 
 import cv2
 import os
