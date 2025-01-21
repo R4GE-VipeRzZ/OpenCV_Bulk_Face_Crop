@@ -21,16 +21,30 @@ margin: This value sets the percentage value of the face size that is add around
 
 output_dimensions
 width: This value sets the width in pixels of the output image(s). The value needs to be at least 1.
+
 height: This value sets the height in pixels of the output image(s). The value needs to be at least 1.
 
 
 
 output_image_details
 file_type: This value sets the file type of the output image(s). The value can be set to jpg, png, bmp or webp.
+
 image_quality: This values sets the amount of compression that is applied to the output image(s). The value can be set between 0 to 100. With 100 been the highest quality and 0 been the lowest quality. This value is ignored if your output file type is bmp, as bitmaps are loss less and don't support compression.
 
 
 
 paths
-input_folder: This value sets the directory that contains the images that you want to be processed. This value should be the full directory of the location that contains the input images,
+create_output_dir: This value sets if the output directory should be create in instance where the specified output directory does not exist. Set this value to True if you want the program to create the output directory if it does not exist. Set this value to False if you do not want the program to create the output directory if it does not exist.
+
+allow_same_input_output_dir: This value sets if the input directory and output directory can be the same. If the value is True. Then in the event of the input and output directories been the same. The output images will overwrite the input images as long as the image file types match. If the value is False. The program won't process any images until the input and output directories are different.
+
+input_folder: This value sets the directory that contains the images that you want to be processed. This value should be the full directory of the location that contains the input images.
+
 outputfolder: This value sets the directory that the output files are saved to. This value should be set to the full directory location of where you want the output images to be saved to. IMPORTAN this value should not be the same as the input folder.
+
+
+
+terminal
+terminal_auto_close: This value sets if the terminal should auto close after the program has finished running. If the value is True. Then the terminal will automatically close when the program finishes running. If the value is False. Then the terminal will wait for a key press before the terminal is closed.
+
+print_processed_image: This value sets if the name of each output image that is created is printed to the terminal. If the value is set to True. Then the name of each output image is printed to the terminal. If the value is set to False. Then the name of each output image is not printed to the terminal.

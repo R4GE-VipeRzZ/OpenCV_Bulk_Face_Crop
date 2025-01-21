@@ -16,7 +16,13 @@
         "image_quality": 100
     },
     "paths": {
-        "input_folder": "C:\\Users\\PC\\Desktop\\input",
-        "output_folder": "C:\\Users\\PC\\Desktop\\output"
+		"allow_same_input_output_dir": "False",
+		"create_output_dir": "False",
+        "input_folder": "C:\\Users\\PC\\Desktop\\test_input",
+        "output_folder": "C:\\Users\\PC\\Desktop\\test_output"
+    },
+	"terminal": {
+        "terminal_auto_close": "False",
+        "print_processed_image": "True"
     }
 }

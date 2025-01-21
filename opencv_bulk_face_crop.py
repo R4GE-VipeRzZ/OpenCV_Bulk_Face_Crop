@@ -1,11 +1,14 @@
 # Author: Ben Thompson
 # Python 3.13.1
+# Version 1.1
 
 import cv2
 import os
 import numpy as np
 import sys
 import json
+
+print("OpenCV Bulk Face Crop has started")
 
 def loadJSON(config_file):
     """
@@ -32,16 +35,18 @@ def loadJSON(config_file):
         return {}
 
 def setDictionaries(conf):
-    # Gets the values inside of face_detect from the config an sets it to an empty dictionary if not found
+    # Gets the values inside of face_detect from the config and sets it to an empty dictionary if not found
     face_detect = conf.get("face_detection", [])
-    # Gets the values inside of output_dimensionst from the config an sets it to an empty dictionary if not found
+    # Gets the values inside of output_dimensionst from the config and sets it to an empty dictionary if not found
     output_dims = conf.get("output_dimensions", [])
-    # Gets the values inside of output_image_details from the config an sets it to an empty dictionary if not found
+    # Gets the values inside of output_image_details from the config and sets it to an empty dictionary if not found
     out_img_deets = conf.get("output_image_details", [])
-    # Gets the values inside of paths from the config an sets it to an empty dictionary if not found
+    # Gets the values inside of paths from the config and sets it to an empty dictionary if not found
     path_dict = conf.get("paths", [])
+    # Gets the values inside of the terminal from the config and sets it to an empty dictionary if not found
+    terminal_vals = conf.get("terminal", [])
 
-    return face_detect, output_dims, out_img_deets, path_dict
+    return face_detect, output_dims, out_img_deets, path_dict, terminal_vals
     
     
 
@@ -112,7 +117,7 @@ def cropAndResize(passed_output_aspect_ratio, passed_output_px_width, passed_out
     return resized
 
 # Set the face detection accuracy values
-def setFaceDetectAccuracy(face_dict):
+def getFaceDetectAccuracy(face_dict):
     face_detect_acc = face_dict.get("accuracy", None)
 
     if face_detect_acc is None:
@@ -124,7 +129,7 @@ def setFaceDetectAccuracy(face_dict):
 
     return face_detect_acc
 
-def setMinOverlapNum(face_dict):
+def getMinOverlapNum(face_dict):
     min_overlay_val = face_dict.get("min_overlap_num", None)
 
     if min_overlay_val is None:
@@ -136,7 +141,7 @@ def setMinOverlapNum(face_dict):
 
     return min_overlay_val
 
-def setMinFaceWidth(face_dict):
+def getMinFaceWidth(face_dict):
     face_min_w_px = face_dict.get("min_face_width", None)
 
     if face_min_w_px is None:
@@ -148,7 +153,7 @@ def setMinFaceWidth(face_dict):
 
     return face_min_w_px
 
-def setMinFaceHeight(face_dict):
+def getMinFaceHeight(face_dict):
     face_min_h_px = face_dict.get("min_face_height", None)
 
     if face_min_h_px is None:
@@ -160,7 +165,7 @@ def setMinFaceHeight(face_dict):
 
     return face_min_h_px
 
-def setFaceMargin(face_dict):
+def getFaceMargin(face_dict):
     face_margin = face_dict.get("margin", None)
 
     if face_margin is None:
@@ -172,7 +177,7 @@ def setFaceMargin(face_dict):
 
     return face_margin
 
-def setOutputWidth(dimensions_dict):
+def getOutputWidth(dimensions_dict):
     width_px = dimensions_dict.get("width", None)
 
     if width_px is None:
@@ -184,7 +189,7 @@ def setOutputWidth(dimensions_dict):
 
     return width_px
 
-def setOutputHeight(dimensions_dict):
+def getOutputHeight(dimensions_dict):
     height_px = dimensions_dict.get("height", None)
 
     if height_px is None:
@@ -196,7 +201,7 @@ def setOutputHeight(dimensions_dict):
 
     return height_px
 
-def setOutputFileType(img_details_dict):
+def getOutputFileType(img_details_dict):
     img_file_type = img_details_dict.get("file_type", None)
 
     if img_file_type is None:
@@ -208,7 +213,7 @@ def setOutputFileType(img_details_dict):
 
     return img_file_type
 
-def setImageQuality(img_details_dict):
+def getImageQuality(img_details_dict):
     img_compression = img_details_dict.get("image_quality", None)
 
     if img_compression is None:
@@ -220,51 +225,121 @@ def setImageQuality(img_details_dict):
 
     return img_compression
 
-def setInputFolder(dir_dict):
+def getCreateOutputDir(dir_dict):
+    create_out_dir_bool = dir_dict.get("create_output_dir", None)
+
+    if create_out_dir_bool is None:
+        print("Check the JSON config, the create_output_dir value inside of paths couldn't be found, default value of False has been set instead")
+        create_out_dir_bool = False
+    elif create_out_dir_bool != "true" and create_out_dir_bool != "True" and create_out_dir_bool != "false" and create_out_dir_bool != "False":
+        print("Check the JSON config, the create_output_dir value inside of paths is invalid, default value of False has been set instead")
+        create_out_dir_bool = False
+    elif create_out_dir_bool == "true" or create_out_dir_bool == "True":
+        create_out_dir_bool = True
+    elif create_out_dir_bool == "false" or create_out_dir_bool == "False":
+        create_out_dir_bool = False
+
+    return create_out_dir_bool
+
+def getAllowSameInputOutputDir(dir_dict):
+    input_ouput_dir_same_bool = dir_dict.get("allow_same_input_output_dir", None)
+
+    if input_ouput_dir_same_bool is None:
+        print("Check the JSON config, the allow_same_input_output_dir value inside of paths couldn't be found, default value of False has been set instead")
+        input_ouput_dir_same_bool = False
+    elif input_ouput_dir_same_bool != "true" and input_ouput_dir_same_bool != "True" and input_ouput_dir_same_bool != "false" and input_ouput_dir_same_bool != "False":
+        print("Check the JSON config, the allow_same_input_output_dir inside of paths is invalid, default value of False has been set instead")
+        input_ouput_dir_same_bool = False
+    elif input_ouput_dir_same_bool == "true" or input_ouput_dir_same_bool == "True":
+        input_ouput_dir_same_bool = True
+    elif input_ouput_dir_same_bool == "false" or input_ouput_dir_same_bool == "False":
+        input_ouput_dir_same_bool = False
+
+    return input_ouput_dir_same_bool
+        
+
+def getInputFolder(dir_dict):
     input_dir = dir_dict.get("input_folder", None)
 
     if input_dir is None:
         sys.exit("Check the JSON config, the input_folder value inside of paths couldn't be found, please resolve the issue")
     elif input_dir == "":
         sys.exit("Check the JSON config, the input_folder value inside of paths couldn't be found, please resolve the issue")
+    elif not os.path.isdir(input_dir):
+        sys.exit("Check the input_folder value inside of paths for the JSON config file. The specified directory does not exist")
 
     return input_dir
 
-def setOutputFolder(dir_dict):
+def getOutputFolder(dir_dict):
     output_dir = dir_dict.get("output_folder", None)
 
     if output_dir is None:
         sys.exit("Check the JSON config, the output_folder value inside of paths couldn't be found, please resolve the issue")
     elif output_dir == "":
         sys.exit("Check the JSON config, the output_folder value inside of paths couldn't be found, please resolve the issue")
+    elif not os.path.isdir(output_dir):
+        # Calls the function that reads the create_output_dir value from the config file to decide if the output directoy that doesn't exist should be created
+        create_output_dir = getCreateOutputDir(dir_dict)
+
+        if create_output_dir:
+            print("Warning! The specified output directory doesn't exists. The output directory will be created")
+        else:
+            sys.exit("Check the output_folder value inside of paths for the JSON config file. The specified directory does not exist")
 
     return output_dir
 
-def processImages(passed_face_detection, passed_output_dimensions, passed_output_image_details, passed_paths):
+def getPrintProcessedImage(terminal_dict):
+    print_processed_img_bool = terminal_dict.get("print_processed_image", None)
+
+    if print_processed_img_bool is None:
+        print("Check the JSON config, the print_processed_image value inside of terminal couldn't be found, default value of True has been set instead")
+        print_processed_img_bool = True
+    elif print_processed_img_bool != "true" and print_processed_img_bool != "True" and print_processed_img_bool != "false" and print_processed_img_bool != "False":
+        print("Check the JSON config, the print_processed_image inside of terminal is invalid, default value of True has been set instead")
+        print_processed_img_bool = True
+    elif print_processed_img_bool == "true" or print_processed_img_bool == "True":
+        print_processed_img_bool = True
+    elif print_processed_img_bool == "false" or print_processed_img_bool == "False":
+        print_processed_img_bool = False
+
+    return print_processed_img_bool
+
+def processImages(passed_face_detection, passed_output_dimensions, passed_output_image_details, passed_paths, passed_terminal):
     # Sets the variable used for the scale factor
-    face_detect_accuracy = setFaceDetectAccuracy(passed_face_detection)
+    face_detect_accuracy = getFaceDetectAccuracy(passed_face_detection)
     # Sets the variable used for the nim neighbors parameter
-    min_overlap_num = setMinOverlapNum(passed_face_detection)
+    min_overlap_num = getMinOverlapNum(passed_face_detection)
     # Sets the variable that is used for the minimum width of the bounding box for a detection to be valid
-    min_face_width = setMinFaceWidth(passed_face_detection)
+    min_face_width = getMinFaceWidth(passed_face_detection)
     # Sets the variable that is used for the minimum height of the bounding box for a detection to be valid
-    min_face_height = setMinFaceHeight(passed_face_detection)
+    min_face_height = getMinFaceHeight(passed_face_detection)
     # Sets the variable that is used for the amount of margin % around the detected face
-    margin = setFaceMargin(passed_face_detection)
+    margin = getFaceMargin(passed_face_detection)
 
     # Sets the variable that is used to set the width in px of the output images
-    output_px_width = setOutputWidth(passed_output_dimensions)
-    # Sets the variable that is used to set the height in px of the output images
-    output_px_height = setOutputHeight(passed_output_dimensions)
+    output_px_width = getOutputWidth(passed_output_dimensions)    # Sets the variable that is used to set the height in px of the output images
+    output_px_height = getOutputHeight(passed_output_dimensions)
 
     # Sets the variable that is used for the file type of the output images
-    output_file_type = setOutputFileType(passed_output_image_details)
+    output_file_type = getOutputFileType(passed_output_image_details)
     # Sets the variable that is used for the amount of compression on the output images
-    image_quality = setImageQuality(passed_output_image_details)
+    image_quality = getImageQuality(passed_output_image_details)
 
     # Sets the variable that is used for the input directory for the images
-    input_folder = setInputFolder(passed_paths)
-    output_folder = setOutputFolder(passed_paths)
+    input_folder = getInputFolder(passed_paths)
+    output_folder = getOutputFolder(passed_paths)
+
+    # Checks if the input and output directories are the same
+    if input_folder == output_folder:
+        allow_same_dir = getAllowSameInputOutputDir(passed_paths)
+
+        if allow_same_dir:
+            print("Warning! The input and output directories are the same. The output images will overwrite the input images if the ouput file type matches the input file type of the image")
+        else:
+            sys.exit("Warning! The input and output directories are the same. The program has terminated to prevent the output images overwriting the input images of the same image file type")
+
+    # Sets the variable that is used to determin if the file name of the images that has been processed should be printed.
+    display_processed_img_name = getPrintProcessedImage(passed_terminal)
 
     # Calulates the aspect ratio that the output should be and stores it
     output_aspect_ratio = output_px_width / output_px_height
@@ -338,19 +413,44 @@ def processImages(passed_face_detection, passed_output_dimensions, passed_output
                         cv2.imwrite(output_path, resized_face, [cv2.IMWRITE_WEBP_QUALITY, image_quality])
                     else:
                         print("Output file type is not supported!")
-                    print(f"Processed {filename}")
+
+                    # Prints the name of the processed image if the value is set to True in the config
+                    if display_processed_img_name:
+                        print(f"Processed {filename}")
                 else:
                     print(f"No face detected in {filename}")
     else:
-        print("Warning! No images of supported file type were found in the input directory, check the output_folder value inside of paths that is contained within the config JSON file")
+        print("Warning! No images of supported file type were found in the input directory, check the input_folder value inside of paths that is contained within the config JSON file")
+
+def getTerminalAutoClose(terminal_dict):
+    auto_close_bool = terminal_dict.get("terminal_auto_close", None)
+
+    if auto_close_bool is None:
+        print("Check the JSON config, the terminal_auto_close value inside of terminal couldn't be found, default value of False has been set instead")
+        auto_close_bool = False
+    elif auto_close_bool != "true" and auto_close_bool != "True" and auto_close_bool != "false" and auto_close_bool != "False":
+        print("Check the JSON config, the terminal_auto_close inside of terminal is invalid, default value of False has been set instead")
+        auto_close_bool = False
+    elif auto_close_bool == "true" or auto_close_bool == "True":
+        auto_close_bool = True
+    elif auto_close_bool == "false" or auto_close_bool == "False":
+        auto_close_bool = False
+
+    return auto_close_bool
 
 
 # Calls the function that loads the external JSON config file
 config = loadJSON("config.json");
 # Sets the dictionaries for the config values
-face_detection, output_dimensions, output_image_details, paths = setDictionaries(config);
+face_detection, output_dimensions, output_image_details, paths, terminal = setDictionaries(config);
 
 # Process the images
-processImages(face_detection, output_dimensions, output_image_details, paths)
-print("Done")
+processImages(face_detection, output_dimensions, output_image_details, paths, terminal)
+
+# Checks if the terminal should be close automatically after the program finishes, or should wait for a key input to close the terminal
+if getTerminalAutoClose(terminal):
+    print("Done")
+else:
+    print("Done")
+    input("Press any key to close the terminal")
 
